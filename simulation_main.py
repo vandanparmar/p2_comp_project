@@ -64,6 +64,7 @@ def plot_ring_live(critical_values,rings,masses,graph):
 	plt.draw()
 	plt.pause(0.0001)
 
+#live plots the full simulation
 def plot_live_full(vals,ring_sol,mass_sol):
 	this_rings = np.reshape(ring_sol[0],(-1,4))
 	plt.gca().set_aspect('equal', adjustable='box')
@@ -75,7 +76,7 @@ def plot_live_full(vals,ring_sol,mass_sol):
 	for i in range(1,len(ring_sol)):
 		plot_ring_live(vals,np.reshape(ring_sol[i],(-1,4)),np.reshape(mass_sol[i],(-1,5)),graph)
 
-
+#calculates the differential step for the test masses
 def g(masses, rings):
 	x = rings[:,0]
 	y = rings[:,1]
@@ -93,6 +94,7 @@ def g(masses, rings):
 	toReturn = np.nan_to_num(toReturn)
 	return toReturn
 
+#calculates the differential step for the galactic centers
 def g_mass(masses):
 	x = masses[:,0]
 	y = masses[:,1]
@@ -110,8 +112,7 @@ def g_mass(masses):
 	toReturn = np.nan_to_num(toReturn)
 	return toReturn
 
-
-#the differential step for the ODE solver
+#the differential step for wrapper ODE solver
 def ode_step(full_set,t,ring_no,thing):
 	rings = full_set[:ring_no]
 	masses = full_set[ring_no:]
@@ -122,6 +123,7 @@ def ode_step(full_set,t,ring_no,thing):
 	toReturn = np.append(dringsdt,dmassesdt)
 	return toReturn
 
+#differential step for the fixed ODE solver
 def ode_step_rev(t,full_set,ring_no):
 	rings = full_set[:ring_no]
 	masses = full_set[ring_no:]
@@ -137,8 +139,8 @@ colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"
 particle_density = 5
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
-masses = [[0.0,0.0,-0.155,0.0,1],[-30,-30,0.155,0.0,2]]
-#masses = [[0.0,0.0,0.0,0.0,1.0]]
+#masses = [[0.0,0.0,-0.155,0.0,1],[-30,-30,0.155,0.0,2]]
+masses = [[0.0,0.0,0.0,0.0,1.0]]
 ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 #ring_set = create_ring_set([[1,5],[2,5]])
 
