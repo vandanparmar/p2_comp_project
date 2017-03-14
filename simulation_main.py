@@ -168,19 +168,9 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 		plot_ring_set(vals,np.reshape(ring_sol[index],(-1,4)),mass_sol,timeToPlot,index)
 
 	if (saveName!= ""):
-		save_to_file(sol,saveName,t)
-
-def save_to_file(sol,filename,times):
-	beginning_row = "Time \t Solution"
-	with open(filename+'.csv', 'w', newline='') as csvfile:
-		writer = csv.writer(csvfile, delimiter=',')
-		writer.writerow(beginning_row)
-		for i,time in enumerate(times):
-			line = str(time) +'\t'+ str(sol[i])
-			writer.writerow(line)
+		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps))
 
 
-	
 epsilon = 0.1 #smoothing length
 colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"]
 particle_density = 5
@@ -190,11 +180,11 @@ masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,3]]
 #masses = [[0.0,0.0,0.0,0.0,1.0]]
 ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 
-totalTime = 10
-noOfSteps = 30
-timeToPlot = 0
+totalTime = 300
+noOfSteps = 300
+timeToPlot = 1
 
-indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,"test")
+indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,str(masses)+'t='+str(totalTime)+'.txt')
 
 #print(sol[len(sol)-1])
 #sol = integrate.odeint(ode_step,full_set_f,t,args=(ring_no,))
