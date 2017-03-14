@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 from scipy import integrate
 
 
@@ -36,6 +37,7 @@ def plot_ring_set(critical_values, rings, mass_sol,time,index):
 	plot = []
 	plt.gca().set_aspect('equal', adjustable='box')
 	plt.title("Time = "+str(time))
+	plt.grid(c="#cccccc")
 	rings = np.split(rings,critical_values)
 	for i in range(0,int(len(mass_sol[0])/5)):
 		plt.plot(mass_sol[:,0+5*i],mass_sol[:,1+5*i],c="g")
@@ -86,8 +88,8 @@ def g(masses, rings):
 	for mass in masses:
 		delta_x = x-mass[0]
 		delta_y = y-mass[1]
-		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+epsilon**2)
-		r3 = np.power(r,-3)
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+epsilon**2) #smoothing applied
+		r3 = np.power(r,-3) 
 		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
 		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = rings[:,2]
@@ -105,7 +107,7 @@ def g_mass(masses):
 		delta_y = y-mass[1]
 		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
 		r3 = np.power(r,-3)
-		r3 = np.clip(r3,0,1e4)
+		r3 = np.clip(r3,0,1e4) #to avoid infinities from self interactions
 		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
 		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = masses[:,2]
@@ -114,7 +116,7 @@ def g_mass(masses):
 	return toReturn
 
 #the differential step for wrapper ODE solver
-def ode_step(full_set,t,ring_no,thing):
+def ode_step(full_set,t,ring_no):
 	rings = full_set[:ring_no]
 	masses = full_set[ring_no:]
 	rings = np.reshape(rings,(-1,4))
@@ -159,12 +161,24 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	sol = np.reshape(sol,(-1,full_length))
 	ring_sol = sol[:,:ring_no]
 	mass_sol = sol[:,ring_no:]
-	print(mass_sol.shape)
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
 	else:
 		index = round(timeToPlot/dt)
 		plot_ring_set(vals,np.reshape(ring_sol[index],(-1,4)),mass_sol,timeToPlot,index)
+
+	if (saveName!= ""):
+		save_to_file(sol,saveName,t)
+
+def save_to_file(sol,filename,times):
+	beginning_row = "Time \t Solution"
+	with open(filename+'.csv', 'w', newline='') as csvfile:
+		writer = csv.writer(csvfile, delimiter=',')
+		writer.writerow(beginning_row)
+		for i,time in enumerate(times):
+			line = str(time) +'\t'+ str(sol[i])
+			writer.writerow(line)
+
 
 	
 epsilon = 0.1 #smoothing length
@@ -176,11 +190,11 @@ masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,3]]
 #masses = [[0.0,0.0,0.0,0.0,1.0]]
 ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 
-totalTime = 300
-noOfSteps = 300
+totalTime = 10
+noOfSteps = 30
+timeToPlot = 0
 
-indiv_sim(masses,ring_set,totalTime,noOfSteps,0,"")
-
+indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,"test")
 
 #print(sol[len(sol)-1])
-#sol = integrate.odeint(ode_step,full_set_f,t,args=(ring_no,thing))
+#sol = integrate.odeint(ode_step,full_set_f,t,args=(ring_no,))
