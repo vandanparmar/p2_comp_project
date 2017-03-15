@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import csv
 from scipy import integrate
 
 
@@ -171,20 +170,23 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps))
 
 
-epsilon = 0.1 #smoothing length
-colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"]
-particle_density = 5
-#masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
-#masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
-masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,3]]
-#masses = [[0.0,0.0,0.0,0.0,1.0]]
-ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+# epsilon = 0.1 #smoothing length
+# colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"]
+# particle_density = 5
+# #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
+# #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
+# masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,3]]
+# #masses = [[0.0,0.0,0.0,0.0,1.0]]
+# ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 
-totalTime = 300
-noOfSteps = 300
-timeToPlot = 1
+# totalTime = 300
+# noOfSteps = 300
+# timeToPlot = 1
+# #fileName = str(masses)+'t='+str(totalTime)+'.txt'
+# fileName = 'test.txt'
 
-indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,str(masses)+'t='+str(totalTime)+'.txt')
 
-#print(sol[len(sol)-1])
-#sol = integrate.odeint(ode_step,full_set_f,t,args=(ring_no,))
+# indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,fileName)
+
+# #print(sol[len(sol)-1])
+# #sol = integrate.odeint(ode_step,full_set_f,t,args=(ring_no,))
