@@ -113,7 +113,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	mass_sol = sol[:,ring_no:]
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
-	else:
+	elif (timeToPlot<totalTime):
 		index = round(timeToPlot/dt)
 		plot_ring_set(vals,np.reshape(ring_sol[index],(-1,4)),mass_sol,timeToPlot,index)
 
@@ -125,15 +125,15 @@ epsilon = 0.1 #smoothing length
 particle_density = 5
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
-masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,3]]
+masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
 #masses = [[0.0,0.0,0.0,0.0,1.0]]
 ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 
 totalTime = 300
 noOfSteps = 300
-timeToPlot = 0
+timeToPlot = 1000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
-fileName = 'test.txt'
+fileName = 'equal_mass_test.txt'
 
 
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,fileName)

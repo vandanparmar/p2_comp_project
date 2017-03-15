@@ -18,6 +18,12 @@ def file_loader(file_name):
 	return toReturn
 
 
-full_sol = file_loader('test.txt')
+full_sol = file_loader('equal_mass_test.txt')
 
 plot_live_full(full_sol['vals'],full_sol['ring_sol'],full_sol['mass_sol'],full_sol['dt'])
+# timeToPlot = 109
+# index = round(timeToPlot/full_sol['dt'])
+# plot_ring_set(full_sol['vals'],np.reshape(full_sol['ring_sol'][index],(-1,4)),full_sol['mass_sol'],timeToPlot,index)
+
+
+
