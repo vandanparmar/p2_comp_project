@@ -95,7 +95,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	vals = ring_set[0]
 	rings_f = rings.flatten()
 	ring_no = len(rings_f)
-	full_set_f = np.append(rings_f,masses_f)
+	full_set_f = np.append(rings_f,masses_f) #creating joined masses and rings
 	full_length = len(full_set_f)
 
 	dt = totalTime/noOfSteps
@@ -118,7 +118,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 		plot_ring_set(vals,np.reshape(ring_sol[index],(-1,4)),mass_sol,timeToPlot,index)
 
 	if (saveName!= ""):
-		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps))
+		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
 
 epsilon = 0.1 #smoothing length
@@ -133,7 +133,7 @@ totalTime = 300
 noOfSteps = 300
 timeToPlot = 0
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
-fileName = ''
+fileName = 'test.txt'
 
 
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,fileName)
