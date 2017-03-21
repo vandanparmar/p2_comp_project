@@ -17,13 +17,20 @@ def file_loader(file_name):
 		toReturn['dt'] = toReturn['totalTime']/toReturn['noOfSteps']
 	return toReturn
 
+def plot_loaded_full(full_sol):
+	plot_live_full(full_sol['vals'],full_sol['ring_sol'],full_sol['mass_sol'],full_sol['dt'])
 
-full_sol = file_loader('equal_mass_test.txt')
+def plot_loaded_time(full_sol,timeToPlot):
+	index = round(timeToPlot/full_sol['dt'])
+	plot_ring_set(full_sol['vals'],np.reshape(full_sol['ring_sol'][index],(-1,4)),full_sol['mass_sol'],timeToPlot,index)
+	
 
-plot_live_full(full_sol['vals'],full_sol['ring_sol'],full_sol['mass_sol'],full_sol['dt'])
+full_sol = file_loader('big_test.txt')
+
+#plot_loaded_full(full_sol)
+plot_loaded_time(full_sol,300)
+
 # timeToPlot = 109
-# index = round(timeToPlot/full_sol['dt'])
-# plot_ring_set(full_sol['vals'],np.reshape(full_sol['ring_sol'][index],(-1,4)),full_sol['mass_sol'],timeToPlot,index)
 
 
 
