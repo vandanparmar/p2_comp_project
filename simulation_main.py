@@ -114,7 +114,7 @@ def g_mass(masses):
 		delta_y = y-mass[1]
 		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
 		r3 = np.power(r,-3)
-		r3 = np.clip(r3,0.0,1.0e5) #to avoid infinities from self interactions
+		r3 = np.clip(r3,0.0,1.0e4) #to avoid infinities from self interactions
 		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
 		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = masses[:,2]
@@ -174,7 +174,9 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	# 	energies.append(energy(mass_sol[i,:]))
 	# 	distances.append(distance(mass_sol[i,:]))
 	# plt.plot(energies)
+	# plt.grid()
 	# plt.show()
+	
 	# plt.plot(distances)
 	# plt.show()
 	if (timeToPlot ==0):
@@ -193,19 +195,24 @@ particle_density = 10
 #masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 300
-noOfSteps = 1200
-timeToPlot = 500
+totalTime = 200
+noOfSteps = 1000
+timeToPlot = 0
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
+masses = parabolic_orbit(1.0,9.0)
+ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
 
-qs = np.linspace(8.5,13.5,51)
-for q in qs:
-	print(q)
-	fileName = 'parabolic_equal_mass_q_'+str(int(q*10))+'.txt'
-	masses = parabolic_orbit(1.0,q)
-	ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
-	indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,fileName)
+
+
+# qs = np.linspace(8.5,13.5,51)
+# for q in qs:
+# 	print(q)
+# 	fileName = 'parabolic_equal_mass_q_'+str(int(q*10))+'.txt'
+# 	masses = parabolic_orbit(1.0,q)
+# 	ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+# 	indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,fileName)
 
 
 
