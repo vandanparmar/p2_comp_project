@@ -8,4 +8,5 @@ def fun(x,y):
 
 qs = np.linspace(8.5,13.5,51)
 
+qs = qs[10:]
 print(qs)
