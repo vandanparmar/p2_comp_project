@@ -62,7 +62,7 @@ def energy(masses):
 #creates individual ring of particles with specified relative density
 def create_ring(radius, relative_density):
 	no_of_particles = particle_density*relative_density
-	velocity = np.sqrt(radius**2/dark_r**3)
+	velocity = np.sqrt((radius**2+epsilon**2)/dark_r**3)
 	angles = np.linspace(0,2*np.pi,no_of_particles)
 	positions = radius*np.exp(1j*angles)
 	velocities = velocity*1j*np.exp(1j*angles)
@@ -95,7 +95,7 @@ def g(masses, rings):
 	for mass in masses:
 		delta_x = x-mass[0]
 		delta_y = y-mass[1]
-		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)) #smoothing applied
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+np.power(epsilon,2)) #smoothing applied
 		r = np.clip(r,dark_r,np.inf)
 		r3 = np.power(r,-3) 
 		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]

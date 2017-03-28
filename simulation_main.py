@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import integrate
 from sim_plotting import *
+colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"]
 
 
 #creates elliptical orbits given a closest approach and a second mass (assuming mass1 = 1)
@@ -156,7 +157,6 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	full_length = len(full_set_f)
 
 	dt = totalTime/noOfSteps
-	t = np.linspace(0,totalTime,noOfSteps)
 	sol = [full_set_f.flatten()]
 
 
@@ -177,7 +177,19 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	# plt.grid()
 	# plt.show()
 	
-	# plt.plot(distances)
+	print(ring_sol[:,1])
+	radii =[[]]
+	for i in range(0,4):
+		xs = ring_sol[:,0+4*i]
+		ys = ring_sol[:,1+4*i]
+		radii = np.sqrt(np.power(xs,2)+np.power(ys,2))
+		plt.plot(radii,c=colours[i])
+	plt.xlabel('Time / Scaled Units')
+	plt.ylabel('Radius of Particle / Scaled Units')
+	plt.title('The evolution of radii in circular orbits over a long period of time')
+	plt.grid()
+	plt.show()
+	# # plt.plot(distances)
 	# plt.show()
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
@@ -187,23 +199,23 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	if (saveName!= ""):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
-epsilon = 0.1 #smoothing length
-particle_density = 10
+epsilon = 0.0 #smoothing length
+particle_density = 1
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
-#masses = [[0.0,0.0,0.0,0.0,1.0]]
+masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 200
-noOfSteps = 1000
-timeToPlot = 0
+totalTime = 10000
+noOfSteps = 10000
+timeToPlot = 100000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-masses = parabolic_orbit(1.0,9.0)
-ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+#masses = parabolic_orbit(1.0,9.0)
+#ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
-
 
 
 # qs = np.linspace(8.5,13.5,51)
