@@ -96,7 +96,7 @@ def g(masses, rings):
 	for mass in masses:
 		delta_x = x-mass[0]
 		delta_y = y-mass[1]
-		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+epsilon**2) #smoothing applied
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+np.power(epsilon,2)) #smoothing applied
 		r3 = np.power(r,-3) 
 		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
 		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
@@ -176,16 +176,17 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	# plt.plot(energies)
 	# plt.grid()
 	# plt.show()
-	
+	t = np.linspace(0,totalTime,len(ring_sol))
 	print(ring_sol[:,1])
 	radii =[[]]
 	for i in range(0,4):
 		xs = ring_sol[:,0+4*i]
 		ys = ring_sol[:,1+4*i]
-		radii = np.sqrt(np.power(xs,2)+np.power(ys,2))
-		plt.plot(radii,c=colours[i])
+		radii = np.sqrt(np.power(xs,2)+np.power(ys,2))-(2+i)
+		plt.plot(t,radii,c=colours[i])
+	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 	plt.xlabel('Time / Scaled Units')
-	plt.ylabel('Radius of Particle / Scaled Units')
+	plt.ylabel('Error of Radius of Particle / Scaled Units')
 	plt.title('The evolution of radii in circular orbits over a long period of time')
 	plt.grid()
 	plt.show()
@@ -199,7 +200,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	if (saveName!= ""):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
-epsilon = 0.0 #smoothing length
+epsilon = 0.001 #smoothing length
 particle_density = 1
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
@@ -208,7 +209,7 @@ masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
 totalTime = 10000
-noOfSteps = 10000
+noOfSteps = 20000
 timeToPlot = 100000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
