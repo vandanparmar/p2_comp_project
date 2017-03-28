@@ -168,30 +168,22 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	sol = np.reshape(sol,(-1,full_length))
 	ring_sol = sol[:,:ring_no]
 	mass_sol = sol[:,ring_no:]
-	# energies = []
-	# distances = []
-	# for i in range(0,noOfSteps):
-	# 	energies.append(energy(mass_sol[i,:]))
-	# 	distances.append(distance(mass_sol[i,:]))
-	# plt.plot(energies)
-	# plt.grid()
-	# plt.show()
-	t = np.linspace(0,totalTime,len(ring_sol))
-	print(ring_sol[:,1])
-	radii =[[]]
-	for i in range(0,4):
-		xs = ring_sol[:,0+4*i]
-		ys = ring_sol[:,1+4*i]
-		radii = np.sqrt(np.power(xs,2)+np.power(ys,2))-(2+i)
-		plt.plot(t,radii,c=colours[i])
-	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-	plt.xlabel('Time / Scaled Units')
-	plt.ylabel('Error of Radius of Particle / Scaled Units')
-	plt.title('The evolution of radii in circular orbits over a long period of time')
+	energies = []
+	distances = []
+	for i in range(0,noOfSteps):
+		energies.append(energy(mass_sol[i,:]))
+		distances.append(distance(mass_sol[i,:]))
+	plt.plot(energies)
 	plt.grid()
+	plt.xlabel('Time / Scaled Units')
+	plt.ylabel('Energy / Scaled Units')
+	plt.title('Energy over Time in Parabolic orbit of Two Equal Masses')
 	plt.show()
-	# # plt.plot(distances)
-	# plt.show()
+	plt.plot(distances)
+	plt.xlabel('Time / Scaled Units')
+	plt.ylabel('Separation Distance / Scaled Units')
+	plt.title('Separation Distance over Time in Parabolic orbit of Two Equal Masses')
+	plt.show()
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
 	elif (timeToPlot<totalTime):
@@ -205,15 +197,15 @@ particle_density = 1
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
-masses = [[0.0,0.0,0.0,0.0,1.0]]
+#masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 10000
-noOfSteps = 20000
+totalTime = 300
+noOfSteps = 300
 timeToPlot = 100000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-#masses = parabolic_orbit(1.0,9.0)
+masses = parabolic_orbit(1.0,13.0)
 #ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
