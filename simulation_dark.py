@@ -62,7 +62,7 @@ def energy(masses):
 #creates individual ring of particles with specified relative density
 def create_ring(radius, relative_density):
 	no_of_particles = particle_density*relative_density
-	velocity = np.sqrt((radius**2+epsilon**2)/dark_r**3)
+	velocity = np.sqrt((radius**2)/dark_r**3)
 	angles = np.linspace(0,2*np.pi,no_of_particles)
 	positions = radius*np.exp(1j*angles)
 	velocities = velocity*1j*np.exp(1j*angles)
@@ -93,16 +93,15 @@ def g(masses, rings):
 	y = rings[:,1]
 	toReturn = np.zeros_like(rings)
 	for mass in masses:
-		x -= mass[0]
-		y -= mass[1]
-		r = np.sqrt(np.power(x,2)+np.power(y,2)+np.power(epsilon,2)) #smoothing applied
+		delta_x = x - mass[0]
+		delta_y = y - mass[1]
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
 		r = np.clip(r,dark_r,np.inf)
 		r3 = np.power(r,-3) 
-		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = rings[:,2]
 	toReturn[:,1] = rings[:,3]
-	toReturn = np.nan_to_num(toReturn)
 	return toReturn
 
 #calculates the differential step for the galactic centers
@@ -111,14 +110,13 @@ def g_mass(masses):
 	y = masses[:,1]
 	toReturn = np.zeros_like(masses)
 	for mass in masses:
-		x -= mass[0]
-		y -= mass[1]
-		r = np.sqrt(np.power(x,2)+np.power(y,2))
-		np.clip(r,dark_r,np.inf)
+		delta_x = x - mass[0]
+		delta_y = y - mass[1]
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
 		r3 = np.power(r,-3)
 		r3 = np.clip(r3,0.0,1.0e4) #to avoid infinities from self interactions
-		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = masses[:,2]
 	toReturn[:,1] = masses[:,3]
 	toReturn = np.nan_to_num(toReturn)
@@ -177,10 +175,18 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	# 	distances.append(distance(mass_sol[i,:]))
 	# plt.plot(energies)
 	# plt.grid()
+	# plt.xlabel('Time / $\mathcal{T}$')
+	# plt.ylabel('Energy / $\mathcal{M}  \mathcal{R}^2 \mathcal{T}^{-2}$')
+	# plt.title('Energy over Time in Parabolic orbit of Two Equal Masses')
 	# plt.show()
-	
 	# plt.plot(distances)
+	# plt.plot([0,500],[10,10],'-.')
+	# plt.xlabel('Time / $\mathcal{T}$')
+	# plt.ylabel('Separation Distance / $\mathcal{R}$')
+	# plt.title('Separation Distance over Time in Parabolic orbit of Two Equal Masses')
 	# plt.show()
+
+
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
 	elif (timeToPlot<totalTime):
@@ -189,22 +195,22 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	if (saveName!= ""):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
-epsilon = 0.1 #smoothing length
 dark_r = 6.0 	#radius of the dark matter halo
-particle_density = 1
+particle_density = 20
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
 #masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 200
+totalTime = 300
 noOfSteps = 300
 timeToPlot = 0
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-masses = parabolic_orbit(1.0,9.0)
-ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+masses = parabolic_orbit(1.0,15.0)
+#ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
+ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
 
 

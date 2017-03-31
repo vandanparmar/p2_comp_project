@@ -23,7 +23,7 @@ def elliptical_orbit(mass, q_tot):
 	return [mass1,mass2]
 
 #creates parabolic orbits given a closest approach and a second mass (assuming mass1 = 1)
-def parabolic_orbit(mass, q_tot):
+def parabolic_orbit(mass, q_tot, retrograde):
 	theta = np.pi/1.5
 	#theta = 0
 	mu = mass/(mass+1.0)
@@ -33,8 +33,12 @@ def parabolic_orbit(mass, q_tot):
 	print(r1-r2)
 	v1 = -mass*np.sqrt(2/((1+mass)*(r2-r1)))
 	v2 = -v1/mass
-	mass1 = [r1*np.cos(theta/2),-r1*np.sin(theta/2),0.0,v1,1.0]
-	mass2 = [r2*np.cos(theta/2),-r2*np.sin(theta/2),0.0,v2,mass]
+	if (retrograde):
+		mass1 = [-r1*np.cos(theta/2),-r1*np.sin(theta/2),0.0,v1,1.0]
+		mass2 = [-r2*np.cos(theta/2),-r2*np.sin(theta/2),0.0,v2,mass]
+	else:
+		mass1 = [r1*np.cos(theta/2),-r1*np.sin(theta/2),0.0,v1,1.0]
+		mass2 = [r2*np.cos(theta/2),-r2*np.sin(theta/2),0.0,v2,mass]
 	print('initial energy')
 	print(energy(np.append(mass1,mass2)))
 	return [mass1,mass2]
@@ -93,12 +97,12 @@ def g(masses, rings):
 	y = rings[:,1]
 	toReturn = np.zeros_like(rings)
 	for mass in masses:
-		x -= mass[0]
-		y -= mass[1]
-		r = np.sqrt(np.power(x,2)+np.power(y,2)+np.power(epsilon,2)) #smoothing applied
+		delta_x = x - mass[0]
+		delta_y = y - mass[1]
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+np.power(epsilon,2)) #smoothing applied
 		r3 = np.power(r,-3) 
-		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = rings[:,2]
 	toReturn[:,1] = rings[:,3]
 	toReturn = np.nan_to_num(toReturn)
@@ -110,13 +114,13 @@ def g_mass(masses):
 	y = masses[:,1]
 	toReturn = np.zeros_like(masses)
 	for mass in masses:
-		x -= mass[0]
-		y -= mass[1]
-		r = np.sqrt(np.power(x,2)+np.power(y,2))
+		delta_x = x - mass[0]
+		delta_y = y - mass[1]
+		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
 		r3 = np.power(r,-3)
 		r3 = np.clip(r3,0.0,1.0e4) #to avoid infinities from self interactions
-		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
 	toReturn[:,0] = masses[:,2]
 	toReturn[:,1] = masses[:,3]
 	toReturn = np.nan_to_num(toReturn)
@@ -163,31 +167,20 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	integrator.set_f_params((ring_no))
 	while integrator.successful() and integrator.t<totalTime:
 		sol = np.append(sol,[integrator.integrate(integrator.t+dt)],axis=1)
-
+	
 	sol = np.reshape(sol,(-1,full_length))
 	ring_sol = sol[:,:ring_no]
 	mass_sol = sol[:,ring_no:]
-
-	energies = []
-	distances = []
-	for i in range(0,noOfSteps):
-		energies.append(energy(mass_sol[i,:]))
-		distances.append(distance(mass_sol[i,:]))
-	plt.plot(energies)
-	plt.grid()
-	plt.xlabel('Time / $\mathcal{T}$')
-	plt.ylabel('Energy / $\mathcal{M}  \mathcal{R}^2 \mathcal{T}^{-2}$')
-	plt.title('Energy over Time in Parabolic orbit of Two Equal Masses')
-	plt.show()
-	plt.plot(distances)
-	plt.plot([0,500],[10,10],'-.')
-	plt.xlabel('Time / $\mathcal{T}$')
-	plt.ylabel('Separation Distance / $\mathcal{R}$')
-	plt.title('Separation Distance over Time in Parabolic orbit of Two Equal Masses')
-	plt.show()
+	if (timeToPlot ==0):
+		plot_live_full(vals,ring_sol,mass_sol,dt)
+	elif (timeToPlot<totalTime):
+		index = round(timeToPlot/dt)
+		plot_ring_set(vals,np.reshape(ring_sol[index],(-1,4)),mass_sol,timeToPlot,index)
+	if (saveName!= ""):
+		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
 epsilon = 0 #smoothing length
-particle_density = 1
+particle_density = 30
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
@@ -196,13 +189,20 @@ particle_density = 1
 
 totalTime = 300
 noOfSteps = 300
-timeToPlot = 10000000
+timeToPlot = 400
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-masses = parabolic_orbit(1.0,10.0)
+masses = parabolic_orbit(1.0,12.0, False)
 #ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
 ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
+
+start = time.time()
+
 indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
+
+end = time.time()
+print("\n Time = ")
+print(end-start)
 
 
 # qs = np.linspace(8.5,13.5,51)
