@@ -162,7 +162,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	sol = [full_set_f.flatten()]
 
 
-	integrator = integrate.ode(ode_step_rev).set_integrator("dopri5")
+	integrator = integrate.ode(ode_step_rev).set_integrator("dop853")
 	integrator.set_initial_value(full_set_f,0.0)
 	integrator.set_f_params((ring_no))
 	while integrator.successful() and integrator.t<totalTime:
@@ -190,7 +190,7 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
 epsilon = 0.1 #smoothing length
-dark_r = 6.0 #radius of the dark matter halo
+dark_r = 6.0 	#radius of the dark matter halo
 particle_density = 1
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]

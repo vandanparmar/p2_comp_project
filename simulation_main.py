@@ -1,8 +1,7 @@
 import numpy as np
 from scipy import integrate
 from sim_plotting import *
-colours = ["#FF0000","#cc0040","#990080","#6600BF","#3300FF","#FFFFFF","#000000"]
-
+import time
 
 #creates elliptical orbits given a closest approach and a second mass (assuming mass1 = 1)
 def elliptical_orbit(mass, q_tot):
@@ -159,31 +158,16 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	dt = totalTime/noOfSteps
 	sol = [full_set_f.flatten()]
 
-
-	integrator = integrate.ode(ode_step_rev).set_integrator("dopri5")
+	integrator = integrate.ode(ode_step_rev).set_integrator("dop853")
 	integrator.set_initial_value(full_set_f,0.0)
 	integrator.set_f_params((ring_no))
 	while integrator.successful() and integrator.t<totalTime:
 		sol = np.append(sol,[integrator.integrate(integrator.t+dt)],axis=1)
+
 	sol = np.reshape(sol,(-1,full_length))
 	ring_sol = sol[:,:ring_no]
 	mass_sol = sol[:,ring_no:]
-	energies = []
-	distances = []
-	for i in range(0,noOfSteps):
-		energies.append(energy(mass_sol[i,:]))
-		distances.append(distance(mass_sol[i,:]))
-	plt.plot(energies)
-	plt.grid()
-	plt.xlabel('Time / Scaled Units')
-	plt.ylabel('Energy / Scaled Units')
-	plt.title('Energy over Time in Parabolic orbit of Two Equal Masses')
-	plt.show()
-	plt.plot(distances)
-	plt.xlabel('Time / Scaled Units')
-	plt.ylabel('Separation Distance / Scaled Units')
-	plt.title('Separation Distance over Time in Parabolic orbit of Two Equal Masses')
-	plt.show()
+
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
 	elif (timeToPlot<totalTime):
@@ -192,8 +176,8 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	if (saveName!= ""):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
-epsilon = 0.001 #smoothing length
-particle_density = 1
+epsilon = 0.01 #smoothing length
+particle_density = 0
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
@@ -202,7 +186,7 @@ particle_density = 1
 
 totalTime = 300
 noOfSteps = 300
-timeToPlot = 100000
+timeToPlot = 0
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
 masses = parabolic_orbit(1.0,13.0)

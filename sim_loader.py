@@ -55,6 +55,7 @@ def full_arm(full_sol):
 			distances.append(length_of_arm(full_sol['mass_sol'][i,:],full_sol['ring_sol'][i,:]))
 	return distances
 
+#
 def file_loader(file_name):
 	toReturn = {}
 	with open(file_name,'r') as f:
