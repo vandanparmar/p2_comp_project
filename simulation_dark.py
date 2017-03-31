@@ -93,13 +93,13 @@ def g(masses, rings):
 	y = rings[:,1]
 	toReturn = np.zeros_like(rings)
 	for mass in masses:
-		delta_x = x-mass[0]
-		delta_y = y-mass[1]
-		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2)+np.power(epsilon,2)) #smoothing applied
+		x -= mass[0]
+		y -= mass[1]
+		r = np.sqrt(np.power(x,2)+np.power(y,2)+np.power(epsilon,2)) #smoothing applied
 		r = np.clip(r,dark_r,np.inf)
 		r3 = np.power(r,-3) 
-		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
 	toReturn[:,0] = rings[:,2]
 	toReturn[:,1] = rings[:,3]
 	toReturn = np.nan_to_num(toReturn)
@@ -111,14 +111,14 @@ def g_mass(masses):
 	y = masses[:,1]
 	toReturn = np.zeros_like(masses)
 	for mass in masses:
-		delta_x = x-mass[0]
-		delta_y = y-mass[1]
-		r = np.sqrt(np.power(delta_x,2)+np.power(delta_y,2))
+		x -= mass[0]
+		y -= mass[1]
+		r = np.sqrt(np.power(x,2)+np.power(y,2))
 		np.clip(r,dark_r,np.inf)
 		r3 = np.power(r,-3)
 		r3 = np.clip(r3,0.0,1.0e4) #to avoid infinities from self interactions
-		toReturn[:,2] -= np.multiply(r3,delta_x)*mass[4]
-		toReturn[:,3] -= np.multiply(r3,delta_y)*mass[4]
+		toReturn[:,2] -= np.multiply(r3,x)*mass[4]
+		toReturn[:,3] -= np.multiply(r3,y)*mass[4]
 	toReturn[:,0] = masses[:,2]
 	toReturn[:,1] = masses[:,3]
 	toReturn = np.nan_to_num(toReturn)
