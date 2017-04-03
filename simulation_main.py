@@ -180,30 +180,47 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
 epsilon = 0 #smoothing length
-particle_density = 30
+particle_density = 10
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
-#masses = [[0.0,0.0,0.0,0.0,1.0]]
+masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 300
-noOfSteps = 300
-timeToPlot = 400
+#totalTime = 100
+#noOfSteps = 100
+timeToPlot = 50000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-masses = parabolic_orbit(1.0,12.0, False)
+#masses = parabolic_orbit(1.0,12.0, False)
 #ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
-ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
+#ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
 
-start = time.time()
+# start = time.time()
 
-indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
+# indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
 
-end = time.time()
-print("\n Time = ")
-print(end-start)
+# end = time.time()
+# print("\n Time = ")
+# print(end-start)
 
+
+times = []
+steps = np.arange(10)*100
+for noOfSteps in steps:
+	print (noOfSteps)
+	totalTime = noOfSteps
+	ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
+	start = time.time()
+	indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
+	end = time.time()
+	times.append(end-start)
+	print(end-start)
+
+plt.plot(steps,times,'.')
+plt.xlabel('Length of Simulation / $\mathcal{T}$')
+plt.ylabel('Computation Time / s')
+plt.show()
 
 # qs = np.linspace(8.5,13.5,51)
 # for q in qs:
