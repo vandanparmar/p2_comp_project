@@ -171,6 +171,28 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	sol = np.reshape(sol,(-1,full_length))
 	ring_sol = sol[:,:ring_no]
 	mass_sol = sol[:,ring_no:]
+	
+	# energies = []
+	# distances = []
+	# for i in range(0,noOfSteps):
+	# 	energies.append(energy(mass_sol[i,:]))
+	# 	distances.append(distance(mass_sol[i,:]))
+	# plt.plot(energies)
+	# plt.grid()
+	# plt.show()
+	t = np.linspace(0,totalTime,len(ring_sol))
+	radii =[[]]
+	for i in range(0,5):
+		xs = ring_sol[:,0+4*i]
+		ys = ring_sol[:,1+4*i]
+		radii = np.sqrt(np.power(xs,2)+np.power(ys,2)) -(2+i)
+		plt.plot(t,radii,c=colours[i])
+	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	plt.xlabel('Time / $\mathcal{T}$')
+	plt.ylabel('Error in Radius of Particle / $\mathcal{R}$')
+	plt.show()
+
+
 	if (timeToPlot ==0):
 		plot_live_full(vals,ring_sol,mass_sol,dt)
 	elif (timeToPlot<totalTime):
@@ -179,64 +201,31 @@ def indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot, saveName):
 	if (saveName!= ""):
 		np.savetxt(saveName,sol,header=str(totalTime)+'\t' +str(noOfSteps)+'\t'+str(ring_no)+'\n'+str(vals))
 
-epsilon = 0.1 #smoothing length
-#particle_density = 30
+epsilon = 0.0 #smoothing length
+particle_density = 1
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,20.0,0.31,0.0,2.0]]
 #masses = [[0.0,0.0,0.0,0.0,1.0],[0.0,10.0,0.447,0.0,2.0]]
 #masses = [[0.0,0.0,-0.15,0.0,1],[-30,-30,0.15,0.0,1]]
-#masses = [[0.0,0.0,0.0,0.0,1.0]]
+masses = [[0.0,0.0,0.0,0.0,1.0]]
 
 
-totalTime = 300
-noOfSteps = 300
-timeToPlot = 500
+totalTime = 1000
+noOfSteps = 4000
+timeToPlot = 100000
 #fileName = str(masses)+'t='+str(totalTime)+'.txt'
 #fileName = 'equal_mass_test.txt'
-masses = parabolic_orbit(1.0,13.0, False)
+#masses = parabolic_orbit(1.0,13.0, False)
 #ring_set = create_ring_set([[2,12],[3,18],[4,24],[5,30],[6,36]],masses[0][:4])
-#ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
+ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
 
 # start = time.time()
 
-# indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
+indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
 
 # end = time.time()
 # print("\n Time = ")
 # print(end-start)
 
-
-times = []
-densities = np.power(np.arange(10),2) *4
-for particle_density in densities:
-	print (particle_density)
-	ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
-	start = time.time()
-	indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
-	end = time.time()
-	times.append(end-start)
-	print(end-start)
-
-masses = parabolic_orbit(1.0,11.0, True)
-
-
-retrograde_times = []
-for particle_density in densities:
-	print (particle_density)
-	ring_set = create_ring_set([[2,1],[3,1],[4,1],[5,1],[6,1]],masses[0][:4])
-	start = time.time()
-	indiv_sim(masses,ring_set,totalTime,noOfSteps,timeToPlot,'')
-	end = time.time()
-	retrograde_times.append(end-start)
-	print(end-start)
-
-
-
-plt.plot(5*densities,times,'.',c='#0000cc',label='Prograde')
-plt.plot(5*densities,retrograde_times,'.',c='#cc0000',label='Retrograde')
-plt.xlabel('Number of Particles')
-plt.ylabel('Computation Time / s')
-plt.legend()
-plt.show()
 
 # qs = np.linspace(8.5,13.5,51)
 # for q in qs:
